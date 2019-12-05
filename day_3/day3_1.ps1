@@ -15,7 +15,7 @@ $redLines.PrimaryKey=$KeyColumn
 $x=0
 $y=0
 
-#Create a row
+#Create a default row
 $row = $redLines.NewRow()
 $redLines.Rows.Add($x,$y)
 
@@ -25,7 +25,8 @@ $redInput = $rawInput[0].Split(",") -replace ',',"`n"
 $greenInput = $rawInput[1].Split(",") -replace ',',"`n"
 
 
-#insert the values of every traversed coordinate into the $lines table
+#insert the values of every traversed coordinate into the $redLines table
+#try/catch is used to avoid primary key violation
 for ($i = 0;$i -lt $redInput.Count;$i++) {
     $direction = $redInput[$i].Substring(0,1)
     [int]$distance = $redInput[$i].Substring(1,$redInput[$i].length-1)
@@ -61,7 +62,8 @@ for ($i = 0;$i -lt $redInput.Count;$i++) {
 }
 $x=0
 $y=0
-#insert the values of every traversed coordinate into the $lines table
+#insert the values of every intersect based on primary key violation
+#the catch block will insert the values into the intersects table instead of redLines
 for ($i = 0;$i -lt $greenInput.Count;$i++) {
     $direction = $greenInput[$i].Substring(0,1)
     [int]$distance = $greenInput[$i].Substring(1,$greenInput[$i].length-1)
@@ -101,7 +103,7 @@ for ($i = 0;$i -lt $greenInput.Count;$i++) {
         $distance--
     } 
 }
-
+#find the manhattan distance from the intersects table
 $minDist = 10000
 for ($i=0;$i -lt $intersects.Rows.Count;$i++) {
     if ([Math]::Abs($intersects.Rows.x[$i]) + [Math]::Abs($intersects.Rows.y[$i]) -lt $minDist) {
